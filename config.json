@@ -7,7 +7,7 @@
         }
     },
     "dbd": {
-        "port": 80,
+        "port": 3000,
         "domain": "https://soft-ui-production.up.railway.app",
         "redirectUri": "/discord/callback",
         "license": "54ec3129-43b5-4393-aa58-0b253ea524df",
