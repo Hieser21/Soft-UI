@@ -1,4 +1,5 @@
 // Define Packages
+require('dotenv').config()
 const { Client, GatewayIntentBits } = require('discord.js');
 const config = require('./config.json');
 let DBD = require('discord-dashboard');
@@ -6,7 +7,7 @@ const SoftUI = require("dbd-soft-ui")
 
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-client.login(config.discord.token);
+client.login(process.env.TOKEN);
 
 (async ()=>{
     await DBD.useLicense(config.dbd.license);
