@@ -1,7 +1,5 @@
 {
-  "scripts": {
-  "start": "node index.js"
-  },
+  
   "dependencies": {
     "dbd-soft-ui": "^1.6.36-beta.1",
     "discord-dashboard": "^2.3.61",
