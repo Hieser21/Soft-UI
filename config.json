@@ -8,7 +8,7 @@
     },
     "dbd": {
         "port": 80,
-        "domain": "https://3000-discorddashboard-softui-sc1i9vjlpm7.ws-us90.gitpod.io",
+        "domain": "https://soft-ui-production.up.railway.app",
         "redirectUri": "/discord/callback",
         "license": "54ec3129-43b5-4393-aa58-0b253ea524df",
         "ownerIDs": ["807210491193458699"]
