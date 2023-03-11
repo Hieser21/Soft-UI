@@ -1,67 +1,85 @@
-const colors = require('colors')
-const npmUpdater = require('./utils/updater/npm')
-const fileUpdater = require('./utils/updater/files')
-const consolePrefix = `${'['.blue}${'dbd-soft-ui'.yellow}${']'.blue} `
-const Keyv = require('keyv')
-const path = require('path')
+// Define Packages
+const { Client, GatewayIntentBits } = require('discord.js');
+const config = require('./config.json');
+let DBD = require('discord-dashboard');
+const SoftUI = require("dbd-soft-ui")
 
-module.exports = (themeConfig = {}) => {
-    return {
-        themeCodename: 'softui',
-        viewsPath: path.join(__dirname, '/views'),
-        staticPath: path.join(__dirname, '/views/src'),
-        themeConfig: {
-            ...themeConfig,
-            defaultLocales: require('./locales.js')
-        },
-        messages: {
-            error: {
-                addonLicense: `${consolePrefix}${'Failed to initialise {{ADDON}}.\nThe license this addon was installed with does not match your current discord-dashboard license.'
-                    .cyan
-                    }`
+
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+client.login(config.discord.token);
+
+(async ()=>{
+    await DBD.useLicense(config.dbd.license);
+    DBD.Dashboard = DBD.UpdatedClass();
+
+    const Dashboard = new DBD.Dashboard({
+        port: config.dbd.port,
+        client: config.discord.client,
+        redirectUri: `${config.dbd.domain}${config.dbd.redirectUri}`,
+        domain: config.dbd.domain,
+        ownerIDs: config.dbd.ownerIDs,
+        useThemeMaintenance: true,
+        useTheme404: true,
+        bot: client,
+        theme: SoftUI({
+            customThemeOptions: {
+                index: async ({ req, res, config }) => {
+                    return {
+                        values: [],
+                        graph: {}, // More info at https://dbd-docs.assistantscenter.com/soft-ui/docs/customThemeOptions/
+                        cards: [],
+                    }
+                },
             },
-            success: {
-                addonLoaded: `${consolePrefix}${'Successfully loaded {{ADDON}}.'.cyan
-                    }`
-            }
-        },
-        embedBuilderComponent: require('fs').readFileSync(
-            path.join(__dirname, '/embedBuilderComponent.txt'),
-            'utf8'
-        ),
-        init: async (app, config) => {
-            let outdated = false
-                ; (async () => {
-                    let check = await npmUpdater.update()
-                    await fileUpdater.update()
-                    if (!check) outdated = true
-                })()
-
-            const db = new Keyv(
-                themeConfig.dbdriver ||
-                'sqlite://' + path.join(__dirname, '/database.sqlite')
-            )
-
-            db.on('error', (err) => {
-                console.log('Connection Error', err)
-                process.exit()
-            })
-
-            themeConfig = {
-                ...themeConfig,
-                defaultLocales: require('./locales.js')
-            }
-
-            require('./utils/functions/errorHandler')(config, themeConfig, db)
-            require('./utils/functions/settingsPage')(config, themeConfig, db)
-            // await require('./utils/addonManager').execute(themeConfig, config, app, module.exports.messages);
-            require('./utils/initPages').init(config, themeConfig, app, db)
-        }
-    }
-}
-
-module.exports.partials = __dirname + '/views/partials'
-module.exports.formTypes = require('./utils/formtypes')
-module.exports.Feed = require('./utils/feedHandler')
-module.exports.cmdHandler = require('./utils/cmdHandler')
-module.exports.version = require('./package.json').version
+            websiteName: "Assistants",
+            colorScheme: "pink",
+            supporteMail: "support@support.com",
+            icons: {
+                favicon: "https://assistantscenter.com/wp-content/uploads/2021/11/cropped-cropped-logov6.png",
+                noGuildIcon: "https://pnggrid.com/wp-content/uploads/2021/05/Discord-Logo-Circle-1024x1024.png",
+                sidebar: {
+                    darkUrl: "https://assistantscenter.com/api/user/avatar/63ad65e2d3f1b1b3acdff794",
+                    lightUrl: "https://assistantscenter.com/api/user/avatar/63ad65e2d3f1b1b3acdff794",
+                    hideName: true,
+                    borderRadius: false,
+                    alignCenter: true,
+                },
+            },er: {
+                image: "/img/soft-ui.webp",
+                spinner: false,
+                text: "Page is loading",
+            },
+            index: {
+                graph: {
+                    enabled: true,
+                    lineGraph: false,
+                    tag: 'Memory (MB)',
+                    max: 100
+                },
+            },
+            sweetalert: {
+                errors: {},
+                success: {
+                    login: "Successfully logged in.",
+                }
+            },
+            preloader: {
+                image: "/img/soft-ui.webp",
+                spinner: false,
+                text: "Page is loading",
+            },
+            admin: {
+                pterodactyl: {
+                    enabled: false,
+                    apiKey: "apiKey",
+                    panelLink: "https://panel.website.com",
+                    serverUUIDs: []
+                }
+            },
+            commands: [],
+        }),
+        
+        settings: []
+    });
+    Dashboard.init();
+})();
