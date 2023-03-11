@@ -22,6 +22,7 @@ client.login(process.env.TOKEN);
         useThemeMaintenance: true,
         useTheme404: true,
         bot: client,
+        acceptPrivacyPolicy: Boolean=true,
         theme: SoftUI({
             customThemeOptions: {
                 index: async ({ req, res, config }) => {
